@@ -26,7 +26,7 @@ function init_data(data) {
         .data(data)
         .enter()       // join data with 'rect' elements
         .append('rect') // create missing elements (for elements in data)
-        .attr('x', function(d, i){  // d is index of data array
+        .attr('x', function(d, i){  // d is data, i is index of data array
             return scale_x(i) + barchart_padding/2;
             })
         .attr( 'y', function(d){
@@ -69,7 +69,9 @@ function add_data(data) {
         .append('rect')
         .merge(selected_elements) // merge with old data join
         .transition()
+        .delay(500)
         .duration(1500)
+        .ease(d3.easeElasticOut)
         .attr('x', function(d, i){
             return scale_x(i) + barchart_padding/2;
             })
@@ -87,7 +89,9 @@ function add_data(data) {
         .append('text')
         .merge(selected_text_elements) // merge with old data join
         .transition()
+        .delay(500)
         .duration(1500)
+        .ease(d3.easeElasticOut)
         .text(function(d){return d;}) // number in the array of data
         .attr( 'x', function (d,i){
             return scale_x(i) +
@@ -103,7 +107,6 @@ function add_data(data) {
 
 
 function reverse_data(data) {
-    // create scales
     data.reverse();
     var scale_x = d3.scaleBand()
                 .domain(d3.range(data.length)) // better index than array
@@ -115,7 +118,11 @@ function reverse_data(data) {
     svg.selectAll('rect')
         .data(data)
         .transition()
+        .delay(function(d,i){     // no the animation is dependend on the index in dataarray
+            return (i/data.length) *1500;
+        })
         .duration(1500)
+        .ease(d3.easeElasticOut)
         .attr('x', function(d, i){
             return scale_x(i) + barchart_padding/2;
             })
@@ -129,7 +136,59 @@ function reverse_data(data) {
     svg.selectAll('text')
         .data(data)
         .transition()
+        .delay(function(d,i){
+            return (i/data.length) *1500;
+        })
         .duration(1500)
+        .ease(d3.easeElasticOut)
+        .text(function(d){return d;})
+        .attr( 'x', function (d,i){
+            return scale_x(i) +
+                        (scale_x.bandwidth() + barchart_padding/2) / 2
+            })
+        .attr( 'y', function(d){
+                return barchart_height - (scale_y(d) - barchart_text_size );
+        })
+        .attr( 'font-size', barchart_text_size)
+        .attr( 'fill', 'black')
+        .attr( 'text-anchor', 'middle');
+}
+
+function change_data(data, index, value) {
+    data[index]  = value;
+    var scale_x = d3.scaleBand()
+                .domain(d3.range(data.length)) // better index than array
+                .range([0,barchart_width]);
+    var scale_y = d3.scaleLinear()
+                .domain([0, d3.max(data)])
+                .range([0, barchart_height]);
+
+    svg.selectAll('rect')
+        .data(data)
+        .transition()
+        .delay(function(d,i){     // no the animation is dependend on the index in dataarray
+            return (i/data.length) *1500;
+        })
+        .duration(1500)
+        .ease(d3.easeElasticOut)
+        .attr('x', function(d, i){
+            return scale_x(i) + barchart_padding/2;
+            })
+        .attr( 'y', function(d){
+            return barchart_height - scale_y(d);
+        })
+        .attr( 'width', scale_x.bandwidth() - barchart_padding)
+        .attr( 'height', function(d){ return scale_y(d);})
+        .attr('fill', 'grey'); // bars are gey
+
+    svg.selectAll('text')
+        .data(data)
+        .transition()
+        .delay(function(d,i){
+            return (i/data.length) *1500;
+        })
+        .duration(1500)
+        .ease(d3.easeElasticOut)
         .text(function(d){return d;})
         .attr( 'x', function (d,i){
             return scale_x(i) +
@@ -152,4 +211,10 @@ d3.select("#addbutton").on('click', function(){
 
 d3.select("#reversebutton").on('click', function(){
     reverse_data(all_data);
+});
+
+d3.select("#changebutton").on('click', function(){
+    const input_index = d3.select('#input_index').property('value');
+    const input_value = d3.select('#input_value').property('value');
+    change_data(all_data, parseInt(input_index), parseInt(input_value));
 });
