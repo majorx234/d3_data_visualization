@@ -1,4 +1,4 @@
-var data  = [
+var all_data  = [
                 [ 450, 300 ],
                 [ 210, 240 ],
                 [ 520, 430 ],
@@ -17,10 +17,10 @@ var svg             =   d3.select( '#scatterplot' )
     .attr( 'height', scatterplot_height );
 
 var scale_x = d3.scaleLinear()
-                .domain([0,d3.max(data, function(d){ return d[0]})])    // max with accesor function
+                .domain([0,d3.max(all_data, function(d){ return d[0]})])    // max with accesor function
                 .range([scatterplot_padding, scatterplot_width - 2*scatterplot_padding]);
 var scale_y = d3.scaleLinear()
-                .domain([0,d3.max(data, function(d){ return d[1]})])
+                .domain([0,d3.max(all_data, function(d){ return d[1]})])
                 .range([scatterplot_height - scatterplot_padding, scatterplot_padding]);
 
 // we need axis lines as long as the plot
@@ -39,7 +39,7 @@ svg.append('g')
 
 
 svg.selectAll('circle')
-   .data(data)
+   .data(all_data)
    .enter()
    .append('circle')
    .attr("cx", function(d) {
@@ -49,4 +49,46 @@ svg.selectAll('circle')
        return scale_y(d[1]);
    })
    .attr("r", 10)
-   .attr( 'fill', 'grey' );
+   .attr( 'fill', 'grey' )
+   .on("click", function(event) {
+     // Click handler
+   })
+   .on("mouseover", function(event) {
+     d3.select(this).attr( 'fill', 'red' );
+   })
+   .on("mouseout", function(event) {
+     d3.select(this).attr( 'fill', 'grey' );
+   });
+
+function update_data(data) {
+    const selected_elements = svg.selectAll('rect')
+        .data(data);
+    selected_elements.enter()
+       .append('circle')
+       .merge(selected_elements)
+       .attr("cx", function(d) {
+            return scale_x(d[0]);
+       })
+       .attr("cy", function(d) {
+            return scale_y(d[1]);
+       })
+       .attr("r", 10)
+       .attr( 'fill', 'grey' )
+       .on("click", function(event) {
+         // Click handler
+       })
+       .on("mouseover", function(event) {
+           d3.select(this).attr( 'fill', 'red' );
+       })
+       .on("mouseout", function(event) {
+           d3.select(this).attr( 'fill', 'grey' );
+        });
+    }
+
+svg.on("click", function(event) {
+    const [x, y] = d3.mouse(this);
+    var data_x = scale_x.invert(x);
+    var data_y = scale_y.invert(y);
+    all_data.push([data_x, data_y]);
+    update_data(all_data);
+  });
