@@ -19,7 +19,8 @@ var svg             =   d3.select( '#scatterplot' )
 var scale_x = d3.scaleLinear()
                 .domain([0,d3.max(data, function(d){ return d[0]})])    // max with accesor function
                 .range([scatterplot_padding, scatterplot_width - 2*scatterplot_padding]);
-var scale_y = d3.scaleLinear([0,d3.max(data, function(d){ return d[1]})])
+var scale_y = d3.scaleLinear()
+                .domain([0,d3.max(data, function(d){ return d[1]})])
                 .range([scatterplot_height - scatterplot_padding, scatterplot_padding]);
 
 // we need axis lines as long as the plot
@@ -35,3 +36,17 @@ svg.append('g')
    .attr('class', 'y-axis')
    .attr('transform', 'translate(' + scatterplot_padding + ',0)')
    .call(axis_y);
+
+
+svg.selectAll('circle')
+   .data(data)
+   .enter()
+   .append('circle')
+   .attr("cx", function(d) {
+       return scale_x(d[0]);
+   })
+   .attr("cy", function(d) {
+       return scale_y(d[1]);
+   })
+   .attr("r", 10)
+   .attr( 'fill', 'grey' );
