@@ -29,7 +29,7 @@ var graph_view_width = 600;
 var graph_view_height = 300;
 
 var simulation = d3.forceSimulation(all_data.nodes)
-    .force("charge", d3.forceManyBody())
+    .force("charge", d3.forceManyBody().strength(-400))
     .force("link", d3.forceLink(all_data.links))
     .force("center", d3.forceCenter()
         .x(graph_view_width / 2)
