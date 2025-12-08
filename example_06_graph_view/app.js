@@ -25,6 +25,11 @@ var graph_data  = {
     nodes : [],
     links : []
 };
+var graph_elem = {
+    circles : [],
+    lines : []
+}
+
 
 // menu click on svg to add node
 var svgMenu = [
@@ -110,6 +115,7 @@ function add_node (node) {
         .attr("fill", "white")
         .attr("stroke", "black")
         .attr("class", "node");
+    graph_elem.circles.push(circle);
     return g;
 }
 
@@ -141,14 +147,15 @@ function add_link (from_id, to_id) {
         g = graph_svg.append("g")
                      .datum(link)
                      .style("font-size", "small");
-        g.append("line")
-         .datum(link)
-         .style("stroke", "black")
-         .style("stroke-width", 2)
-         .attr('x1', link.source.x)
-         .attr('y1', link.source.y)
-         .attr('x2', link.target.x)
-         .attr('y2', link.target.y);
+        var line = g.append("line")
+                    .datum(link)
+                    .style("stroke", "black")
+                    .style("stroke-width", 2)
+                    .attr('x1', link.source.x)
+                    .attr('y1', link.source.y)
+                    .attr('x2', link.target.x)
+         .          attr('y2', link.target.y);
+         graph_elem.lines.push(line);
     }
 }
 
@@ -225,4 +232,21 @@ graph_svg = d3.select("#graph")
     .attr("height", graph_view_height)
     .on("contextmenu", d3.contextMenu(svgMenu));
 
+var simulation = d3.forceSimulation(graph_data.nodes)
+    .force("charge", d3.forceManyBody().strength(-400))
+    .force("link", d3.forceLink(graph_data.links))
+    .force("center", d3.forceCenter()
+        .x(graph_view_width / 2)
+        .y(graph_view_height / 2));
 
+simulation.on('tick', function(){
+    var lines = d3.select("#graph").selectAll("line");
+    lines.attr('x1', function(d) {return d.source.x;})
+         .attr('y1', function(d) {return d.source.y;})
+         .attr('x2', function(d) {return d.target.x;})
+         .attr('y2', function(d) {return d.target.y;});
+
+    var circles = d3.select("#graph").selectAll("circle");
+    circles.attr('cx', function(d) {return d.x;})
+           .attr('cy', function(d) {return d.y;});
+});
