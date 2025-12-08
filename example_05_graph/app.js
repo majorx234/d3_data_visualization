@@ -21,7 +21,6 @@ var all_data  = {
         { source: 3, target: 5 },
         { source: 4, target: 6 },
         { source: 5, target: 7 },
-
     ]
 };
 
@@ -70,3 +69,4 @@ simulation.on('tick', function(){
     nodes.attr('cx', function(d) {return d.x;})
          .attr('cy', function(d) {return d.y;});
 });
+

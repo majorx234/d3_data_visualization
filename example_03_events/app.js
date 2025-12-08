@@ -26,7 +26,7 @@ function init_data(data) {
         .data(data)
         .enter()       // join data with 'rect' elements
         .append('rect') // create missing elements (for elements in data)
-        .attr('x', function(d, i){  // d is index of data array
+        .attr('x', function(d, i){  // d is data, i is index of data array
             return scale_x(i) + barchart_padding/2;
             })
         .attr( 'y', function(d){
@@ -122,6 +122,7 @@ function reverse_data(data) {
 
     svg.selectAll('text')
         .data(data)
+        .text(function(d){return d;})
         .attr( 'x', function (d,i){
             return scale_x(i) +
                         (scale_x.bandwidth() + barchart_padding/2) / 2
