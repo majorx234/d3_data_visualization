@@ -118,9 +118,11 @@ function add_node (node) {
         }
 
         function dragging(event,d){
+            // TODO use position of mouse relative to svg
             var xCoor = event.x;
             var yCoor = event.y;
 
+            // TODO avoid manual drawing
             d3.select(this)
               .select('circle')
               .attr("cx", xCoor)
@@ -140,6 +142,7 @@ function add_node (node) {
             .attr("stroke", "black")
             .attr("class", "node");
         }
+    // TODO: manual drawing should be avoided -> sue declarativ syntax instead
     var text = g.append("text")
         .text(node.id);
     var box = text.node().getBBox();
@@ -182,6 +185,8 @@ function add_link (from_id, to_id) {
     if (from && to) {
         var link = { source: from, target: to };
         graph_data.links.push(link);
+        // TODO: should be drawn manual
+        // just need to add data
         g = graph_svg.append("g")
                      .datum(link)
                      .style("font-size", "small");
@@ -263,7 +268,7 @@ function svg_remove_node(event) {
     remove_node(data, event.target);
 }
 
-// TODO: create function
+// TODO: move create function
 graph_svg = d3.select("#graph")
     .append("svg")
     .attr("width", graph_view_width)
