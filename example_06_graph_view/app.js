@@ -101,7 +101,45 @@ function add_node (node) {
         .datum(node)
         .on("click", node_click)
         .on("contextmenu", d3.contextMenu(nodeMenu))
-        .style("font-size", "small");
+        .style("font-size", "small")
+        .call(d3.drag()
+        .on('start', dragStart)
+        .on('drag', dragging)
+        .on('end', dragEnd)
+        );
+
+        function dragStart(event,d){
+            d3.select(this)
+              .select('circle')
+              .attr("r",12)
+              .attr("fill", "white")
+              .attr("stroke", "black")
+              .attr("class", "node");
+        }
+
+        function dragging(event,d){
+            var xCoor = event.x;
+            var yCoor = event.y;
+
+            d3.select(this)
+              .select('circle')
+              .attr("cx", xCoor)
+              .attr("cy", yCoor);
+
+            d3.select(this)
+            .select('text')
+            .attr("x", xCoor - box.width/2)
+            .attr("y", yCoor + box.height/2);
+        }
+
+        function dragEnd(event,d){
+            d3.select(this)
+            .select('circle')
+            .attr("r", (node.id < 10 ? 8 : 4) + Math.sqrt(box.width*box.width,   box.height*box.height) / 2)
+            .attr("fill", "white")
+            .attr("stroke", "black")
+            .attr("class", "node");
+        }
     var text = g.append("text")
         .text(node.id);
     var box = text.node().getBBox();
@@ -232,6 +270,7 @@ graph_svg = d3.select("#graph")
     .attr("height", graph_view_height)
     .on("contextmenu", d3.contextMenu(svgMenu));
 
+/*
 var simulation = d3.forceSimulation(graph_data.nodes)
     .force("charge", d3.forceManyBody().strength(-400))
     .force("link", d3.forceLink(graph_data.links))
@@ -250,3 +289,4 @@ simulation.on('tick', function(){
     circles.attr('cx', function(d) {return d.x;})
            .attr('cy', function(d) {return d.y;});
 });
+*/
