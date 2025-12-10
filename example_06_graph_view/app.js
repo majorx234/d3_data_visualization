@@ -118,20 +118,22 @@ function add_node (node) {
         }
 
         function dragging(event,d){
-            // TODO use position of mouse relative to svg
-            var xCoor = event.x;
-            var yCoor = event.y;
+            var mouse = d3.pointer(event, graph_svg.node());
+            var mouse_x = mouse[0];
+            var mouse_y = mouse[1];
 
-            // TODO avoid manual drawing
+            // TODO avoid manual drawing DOM elements
+            // better update date and use update() function
             d3.select(this)
               .select('circle')
-              .attr("cx", xCoor)
-              .attr("cy", yCoor);
+              .attr("cx", mouse_x)
+              .attr("cy", mouse_y);
 
             d3.select(this)
             .select('text')
-            .attr("x", xCoor - box.width/2)
-            .attr("y", yCoor + box.height/2);
+            .attr("x", mouse_x - box.width/2)
+            .attr("y", mouse_y + box.height/2);
+            log_print("drag node: x,y:" + mouse_x + " , " + mouse_y);
         }
 
         function dragEnd(event,d){
