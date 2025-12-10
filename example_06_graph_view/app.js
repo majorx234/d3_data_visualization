@@ -249,7 +249,7 @@ function node_click (d) {
 
 function svg_add_node(event) {
     last_node = null;
-    var mouse = d3.pointer(event, event.target);
+    var mouse = d3.pointer(event, graph_svg.node());
     // find the smallest index not used
     var indices = sort_nodes();
     for (var i = 0, id = 1; i < indices.length; i++, id++)
