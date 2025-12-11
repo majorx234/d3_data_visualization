@@ -30,10 +30,13 @@ d3.select("#update_button").on('click', function(){
           .data(data);
         data_selection.enter()
                       .append("p")
-                      .attr("id", function(d) { return "p_"+d;});
+                      .attr("id", function(d) { return "enter_p_"+d;});
         state.current = "extended";
     } else if (state.current == "extended") {
-        // n.i.y
+        data_selection = d3.select("#elements")
+          .selectAll("p")
+          .data(data)
+          .attr("id", function(d) { return "update_p_"+d;});
         state.current = "updated";
     } else if (state.current == "updated") {
         dom_elemets_not_in_use = data_selection.exit();
