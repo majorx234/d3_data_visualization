@@ -1,0 +1,21 @@
+var state = {
+    current : "default"
+}
+var data = [0,1,2,3];
+
+function init() {
+
+}
+
+var data_selection = [];
+var dom_elemets_not_in_use = [];
+// events
+d3.select("#update_button").on('click', function(){
+    if (state.current == "default") {
+        data_selection = d3.select("#elements").selectAll("p").data(data);
+        state.current = "inited";
+    } else if (state.current == "inited") {
+        dom_elemets_not_in_use = data_selection.exit();
+        state.current = "finish";
+    }
+});
