@@ -12,6 +12,15 @@ var dom_elemets_not_in_use = [];
 // events
 d3.select("#update_button").on('click', function(){
     if (state.current == "default") {
+        d3.select("#elements")
+          .selectAll("p")
+          .data(data)
+          .enter()
+          .append("p")
+          .attr("id", function(d){return "p_" + d;});
+        state.current = "created";
+    } else if (state.current == "created") {
+
         data_selection = d3.select("#elements").selectAll("p").data(data);
         state.current = "inited";
     } else if (state.current == "inited") {
