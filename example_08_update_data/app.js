@@ -1,7 +1,7 @@
 var data_year = [1750, 1775, 1800, 1825, 1850, 1875, 1900];
 
 var city_population_data = [
-  {name: "london",population:[676000, 710000, 861000, 1335000, 2320000, 4241000, 6480000]},
+  {name: "London",population:[676000, 710000, 861000, 1335000, 2320000, 4241000, 6480000]},
   {name: "Lisabon", population:[130000, 219000, 237000, 258000, 262000, 243000, 363000]},
   {name: "Berlin", population:[113000, 136000, 172000, 222000, 446000, 1045000, 2707000]},
   {name: "Madrid", population:[110000, 132000, 182000, 201000, 216000, 373000, 539000]},
@@ -50,6 +50,7 @@ var circles;
 d3.select("#update_button").on('click', function(){
     if (state == 0) {
         circles = svg_city_rank_scatter_plot.append("g")
+                                            .attr("class","scatter-circles")
                                             .selectAll("circle")
                                             .data(city_population_data)
                                             .enter()
@@ -58,6 +59,16 @@ d3.select("#update_button").on('click', function(){
                                        .attr("cy", function(d,i) { return axis_y_scale(i+1);})
                                        .attr( 'fill', 'grey' )
                                        .attr("r",5);
+        var text = svg_city_rank_scatter_plot.append("g")
+                                             .attr("class", "city-names")
+                                             .selectAll("text")
+                                             .data(city_population_data)
+                                             .enter()
+                                             .append("text");
+        var text_attributes = text.attr("x", function(d,i){ return axis_x_scale(d.population[state]) + 5;})
+                                  .attr("y", function(d,i) { return axis_y_scale(i+1) + 5;})
+                                  .text(function(d,i){ return d.name;})
+                                  .style("fill", "red");
        state = 1;
     } else if (state <= 6) {
         state++;
