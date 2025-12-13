@@ -22,7 +22,7 @@ var height = 400 - margin.top - margin.button;
 
 var svg_city_rank_scatter_plot = svg_city_rank_plot.append("g")
                                                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-var axis_x_scale = d3.scaleLinear().domain([100000, 7000000]).range([0,width]);
+var axis_x_scale = d3.scaleLinear().domain([0, 7000000]).range([0,width]);
 var axis_y_scale = d3.scaleLinear().domain([0,10]).range([0, height]);
 
 var axis_x = d3.axisTop(axis_x_scale).tickFormat(function (d) {
@@ -45,6 +45,22 @@ svg_city_rank_plot.append('g')
                   .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
                   .call(axis_y);
 
+var state = 0;
+var circles;
 d3.select("#update_button").on('click', function(){
+    if (state == 0) {
+        circles = svg_city_rank_scatter_plot.append("g")
+                                            .selectAll("circle")
+                                            .data(city_population_data)
+                                            .enter()
+                                            .append("circle");
+       var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population[state]);})
+                                       .attr("cy", function(d,i) { return axis_y_scale(i+1);})
+                                       .attr( 'fill', 'grey' )
+                                       .attr("r",5);
+       state = 1;
+    } else if (state <= 6) {
+        state++;
+    }
 
 });
