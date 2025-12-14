@@ -52,9 +52,13 @@ svg_city_rank_plot.append('g')
 var inited = 0;
 var state = 0;
 var circles;
+var intervalId;
 
 function init(){
-    if(inited == 1) return;
+    if(inited == 1) {
+        clearInterval(intervalId);
+        return;
+    }
     circles = svg_city_rank_scatter_plot.append("g")
                                         .attr("class","scatter-circles")
                                         .selectAll("circle")
@@ -102,6 +106,6 @@ function update(){
 
 d3.select("#update_button").on('click', init);
 
-var intervalId = setInterval(function() {
+intervalId = setInterval(function() {
     if(inited == 1) update();
 }, 1000);
