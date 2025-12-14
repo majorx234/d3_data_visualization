@@ -82,13 +82,17 @@ function init(){
 function update(){
     circles = svg_city_rank_scatter_plot.selectAll("circle")
                                         .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})));
-    var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
+    var circles_attributes = circles.transition()
+                                    .duration(1000)
+                                    .attr("cx", function(d,i){ return axis_x_scale(d.population);})
                                     .attr("cy", function(d,i) { return axis_y_scale(i+1);})
                                     .attr( 'fill', 'grey' )
                                     .attr("r",5);
     var text = svg_city_rank_scatter_plot.selectAll("text")
                                          .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})));
-    var text_attributes = text.attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
+    var text_attributes = text.transition()
+                              .duration(1000)
+                              .attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
                               .attr("y", function(d,i) { return axis_y_scale(i+1) + 5;})
                               .text(function(d,i){ return d.name;})
                               .style("fill", "red");
