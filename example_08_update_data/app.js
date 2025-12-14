@@ -49,44 +49,55 @@ svg_city_rank_plot.append('g')
                   .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
                   .call(axis_y);
 
+var inited = 0;
 var state = 0;
 var circles;
-d3.select("#update_button").on('click', function(){
-    if (state == 0) {
-        circles = svg_city_rank_scatter_plot.append("g")
-                                            .attr("class","scatter-circles")
-                                            .selectAll("circle")
-            .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})))
-                                            .enter()
-                                            .append("circle");
-       var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
-                                       .attr("cy", function(d,i) { return axis_y_scale(i+1);})
-                                       .attr( 'fill', 'grey' )
-                                       .attr("r",5);
-        var text = svg_city_rank_scatter_plot.append("g")
-                                             .attr("class", "city-names")
-                                             .selectAll("text")
-                                             .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})))
-                                             .enter()
-                                             .append("text");
-        var text_attributes = text.attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
-                                  .attr("y", function(d,i) { return axis_y_scale(i+1) + 5;})
-                                  .text(function(d,i){ return d.name;})
-                                  .style("fill", "red");
-       state = 1;
-    } else if (state <= 6) { // doing update
-        circles = svg_city_rank_scatter_plot.selectAll("circle")
-            .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})));
-       var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
-                                       .attr("cy", function(d,i) { return axis_y_scale(i+1);})
-                                       .attr( 'fill', 'grey' )
-                                       .attr("r",5);
-        var text = svg_city_rank_scatter_plot.selectAll("text")
-                                             .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})));
-        var text_attributes = text.attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
-                                  .attr("y", function(d,i) { return axis_y_scale(i+1) + 5;})
-                                  .text(function(d,i){ return d.name;})
-                                  .style("fill", "red");
-        state++;
-    }
-});
+
+function init(){
+    if(inited == 1) return;
+    circles = svg_city_rank_scatter_plot.append("g")
+                                        .attr("class","scatter-circles")
+                                        .selectAll("circle")
+                                        .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})))
+                                        .enter()
+                                        .append("circle");
+    var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
+                                    .attr("cy", function(d,i) { return axis_y_scale(i+1);})
+                                    .attr( 'fill', 'grey' )
+                                    .attr("r",5);
+    var text = svg_city_rank_scatter_plot.append("g")
+                                         .attr("class", "city-names")
+                                         .selectAll("text")
+                                         .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})))
+                                         .enter()
+                                         .append("text");
+    var text_attributes = text.attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
+                              .attr("y", function(d,i) { return axis_y_scale(i+1) + 5;})
+                              .text(function(d,i){ return d.name;})
+                              .style("fill", "red");
+    state = 1;
+    inited = 1;
+}
+
+function update(){
+    circles = svg_city_rank_scatter_plot.selectAll("circle")
+                                        .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})));
+    var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
+                                    .attr("cy", function(d,i) { return axis_y_scale(i+1);})
+                                    .attr( 'fill', 'grey' )
+                                    .attr("r",5);
+    var text = svg_city_rank_scatter_plot.selectAll("text")
+                                         .data(city_population_data.map(data => ({name:data.name, population:data.population[state]})));
+    var text_attributes = text.attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
+                              .attr("y", function(d,i) { return axis_y_scale(i+1) + 5;})
+                              .text(function(d,i){ return d.name;})
+                              .style("fill", "red");
+    state++;
+    if( state == 7) state = 0;
+}
+
+d3.select("#update_button").on('click', init);
+
+var intervalId = setInterval(function() {
+    if(inited == 1) update();
+}, 1000);
