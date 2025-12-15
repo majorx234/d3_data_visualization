@@ -59,11 +59,17 @@ function init(){
         clearInterval(intervalId);
         return;
     }
-    let rank_data = city_population_data.map(data => ({name:data.name, population:data.population[state]}));
+    city_population_data.sort(function(left, right){
+        return left.population[state] > right.population[state] ? -1 : 1;
+    });
+    let rank_data = city_population_data.map(data => ({
+        name:data.name,
+        population:data.population[state]
+    }));
     circles = svg_city_rank_scatter_plot.append("g")
                                         .attr("class","scatter-circles")
                                         .selectAll("circle")
-                                        .data(rank_data)
+                                        .data(rank_data, function(d, i){return d.name;})
                                         .enter()
                                         .append("circle");
     var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
@@ -73,7 +79,7 @@ function init(){
     var text = svg_city_rank_scatter_plot.append("g")
                                          .attr("class", "city-names")
                                          .selectAll("text")
-                                         .data(rank_data)
+                                         .data(rank_data, function(d, i){return d.name;})
                                          .enter()
                                          .append("text");
     var text_attributes = text.attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
@@ -85,9 +91,12 @@ function init(){
 }
 
 function update(){
+    city_population_data.sort(function(left, right){
+        return left.population[state] > right.population[state] ? -1 : 1;
+    });
     let rank_data = city_population_data.map(data => ({name:data.name, population:data.population[state]}));
     circles = svg_city_rank_scatter_plot.selectAll("circle")
-                                        .data(rank_data);
+                                        .data(rank_data, function(d, i){return d.name;});
     var circles_attributes = circles.transition()
                                     .duration(1000)
                                     .attr("cx", function(d,i){ return axis_x_scale(d.population);})
@@ -95,7 +104,7 @@ function update(){
                                     .attr( 'fill', 'grey' )
                                     .attr("r",5);
     var text = svg_city_rank_scatter_plot.selectAll("text")
-                                         .data(rank_data);
+                                         .data(rank_data, function(d, i){return d.name;});
     var text_attributes = text.transition()
                               .duration(1000)
                               .attr("x", function(d,i){ return axis_x_scale(d.population) + 5;})
