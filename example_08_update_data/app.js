@@ -66,19 +66,15 @@ function init(){
         name:data.name,
         population:data.population[state]
     }));
-    circles = svg_city_rank_scatter_plot.append("g")
-                                        .attr("class","scatter-circles")
-                                        .selectAll("circle")
+    var circles = svg_city_rank_scatter_plot.selectAll("circles")
                                         .data(rank_data, function(d, i){return d.name;})
                                         .enter()
-                                        .append("circle");
+                                        .append("circles");
     var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
                                     .attr("cy", function(d,i) { return axis_y_scale(i+1);})
                                     .attr( 'fill', 'grey' )
                                     .attr("r",5);
-    var text = svg_city_rank_scatter_plot.append("g")
-                                         .attr("class", "city-names")
-                                         .selectAll("text")
+    var text = svg_city_rank_scatter_plot.selectAll("text")
                                          .data(rank_data, function(d, i){return d.name;})
                                          .enter()
                                          .append("text");
