@@ -66,10 +66,10 @@ function init(){
         name:data.name,
         population:data.population[state]
     }));
-    var circles = svg_city_rank_scatter_plot.selectAll("circles")
+    var circles = svg_city_rank_scatter_plot.selectAll("circle")
                                         .data(rank_data, function(d, i){return d.name;})
                                         .enter()
-                                        .append("circles");
+                                        .append("circle");
     var circles_attributes = circles.attr("cx", function(d,i){ return axis_x_scale(d.population);})
                                     .attr("cy", function(d,i) { return axis_y_scale(i+1);})
                                     .attr( 'fill', 'grey' )
