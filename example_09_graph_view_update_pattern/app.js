@@ -117,7 +117,7 @@ function add_node (node) {
         node.x = mouse_x;
         node.y = mouse_y;
 
-        draw();
+        update();
         log_print("drag node: x,y:" + mouse_x + " , " + mouse_y);
     }
 
@@ -130,7 +130,7 @@ function add_node (node) {
           .attr("class", "node");
     }
     // draw node:
-    g.append("circle").attr("cx", function(d,i){
+    g.append("circle", ":last-child").attr("cx", function(d,i){
                                       return d.x;
                                   })
                       .attr("cy", function(d,i){
@@ -177,7 +177,7 @@ function add_link (from_id, to_id) {
         var line = graph_svg.selectAll("line")
                             .data(graph_data.links)
                             .enter()
-                            .append("line");
+                            .insert("line", ":first-child");
 
         line.style("stroke", "black")
             .style("stroke-width", 2)
@@ -186,6 +186,7 @@ function add_link (from_id, to_id) {
             .attr('x2', (d,i) => { return d.target.x;})
             .attr('y2', (d,i) => { return d.target.y;});
     }
+    draw();
 }
 
 function remove_link (from, to) {
@@ -200,6 +201,32 @@ function remove_link (from, to) {
 function draw () {
     // update data
     // lines
+    var line = graph_svg.selectAll("line");
+
+    line.style("stroke", "black")
+    .style("stroke-width", 2)
+    .attr('x1', (d,i) => { return d.source.x;})
+    .attr('y1', (d,i) => { return d.source.y;})
+    .attr('x2', (d,i) => { return d.target.x;})
+    .attr('y2', (d,i) => { return d.target.y;});
+
+    // nodes
+    var g = graph_svg.selectAll("g");
+    g.select("circle")
+     .attr("cx", function(d,i){ return d.x;})
+     .attr("cy", function(d,i){ return d.y;})
+     .attr("r", 10)
+     .attr("fill", "white")
+     .attr("stroke", "black")
+     .attr("class", "node");
+    var text = g.select("text");
+    var box = text.node().getBBox();
+    text.attr("x", (d,i) => { return d.x - box.width/2;})
+        .attr("y", (d,i) => { return d.y + box.height/3;});
+
+}
+
+function update () {
     var line = graph_svg.selectAll("line")
                         .data(graph_data.links);
 
@@ -224,11 +251,6 @@ function draw () {
     var box = text.node().getBBox();
     text.attr("x", (d,i) => { return d.x - box.width/2;})
         .attr("y", (d,i) => { return d.y + box.height/3;});
-
-}
-
-function update () {
-    // graph_layout.nodes(graph_data.nodes).links(graph_data.links).start();
 }
 
 // clicks on node
