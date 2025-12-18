@@ -21,6 +21,10 @@ var graph_svg;
 // stores id of last klicked element
 var last_node;
 
+var pos_select_start;
+
+var pos_select_end;
+
 var graph_data  = {
     nodes : [],
     links : []
@@ -295,3 +299,31 @@ graph_svg = d3.select("#graph")
 graph_svg.attr("width", graph_view_width)
          .attr("height", graph_view_height)
          .on("contextmenu", d3.contextMenu(svgMenu));
+graph_svg.call(d3.drag().on('start', drag_select_start)
+                    .on('drag', dragging_select)
+                    .on('end', drag_select_end));
+
+// drag functions to select elements
+// TODO: rework
+function drag_select_start(event, d){
+    var mouse = d3.pointer(event, graph_svg.node());
+    var mouse_x = mouse[0];
+    var mouse_y = mouse[1];
+    pos_select_start = [mouse_x, mouse_y];
+}
+
+function dragging_select(event,d){
+    var mouse = d3.pointer(event, graph_svg.node());
+    var mouse_x = mouse[0];
+    var mouse_y = mouse[1];
+    //d3.select(graph_svg)
+    log_print("dragging select node: x,y:" + mouse_x + " , " + mouse_y);
+}
+
+function drag_select_end(event,d){
+    var mouse = d3.pointer(event, graph_svg.node());
+    var mouse_x = mouse[0];
+    var mouse_y = mouse[1];
+    //d3.select(graph_svg)
+    log_print("drag select end: x,y:" + mouse_x + " , " + mouse_y);
+}
