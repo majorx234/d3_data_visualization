@@ -43,7 +43,7 @@ function init_data(data) {
         .text(function(d){return d;}) // number in the array of data
         .attr( 'x', function (d,i){
             return scale_x(i) +
-                        (scale_x.bandwidth() + barchart_padding/2) / 2
+                (scale_x.bandwidth() + barchart_padding/2) / 2;
             })
         .attr( 'y', function(d){
                 return barchart_height - (scale_y(d) - barchart_text_size );
@@ -95,7 +95,7 @@ function add_data(data) {
         .text(function(d){return d;}) // number in the array of data
         .attr( 'x', function (d,i){
             return scale_x(i) +
-                        (scale_x.bandwidth() + barchart_padding/2) / 2
+                (scale_x.bandwidth() + barchart_padding/2) / 2;
             })
         .attr( 'y', function(d){
                 return barchart_height - (scale_y(d) - barchart_text_size );
@@ -144,7 +144,7 @@ function reverse_data(data) {
         .text(function(d){return d;})
         .attr( 'x', function (d,i){
             return scale_x(i) +
-                        (scale_x.bandwidth() + barchart_padding/2) / 2
+                (scale_x.bandwidth() + barchart_padding/2) / 2;
             })
         .attr( 'y', function(d){
                 return barchart_height - (scale_y(d) - barchart_text_size );
@@ -192,7 +192,7 @@ function change_data(data, index, value) {
         .text(function(d){return d;})
         .attr( 'x', function (d,i){
             return scale_x(i) +
-                        (scale_x.bandwidth() + barchart_padding/2) / 2
+                (scale_x.bandwidth() + barchart_padding/2) / 2;
             })
         .attr( 'y', function(d){
                 return barchart_height - (scale_y(d) - barchart_text_size );
