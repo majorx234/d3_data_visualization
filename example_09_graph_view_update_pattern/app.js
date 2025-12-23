@@ -21,9 +21,15 @@ var graph_svg;
 // stores id of last klicked element
 var last_node;
 
-var pos_select_start;
-
-var pos_select_end;
+// stores pos of selection rectangle
+var pos_select_start = {
+    x: 0.0,
+    y: 0.0
+};
+var pos_select_end = {
+    x: 0.0,
+    y: 0.0
+};
 
 var graph_data  = {
     nodes : [],
@@ -309,14 +315,40 @@ function drag_select_start(event, d){
     var mouse = d3.pointer(event, graph_svg.node());
     var mouse_x = mouse[0];
     var mouse_y = mouse[1];
-    pos_select_start = [mouse_x, mouse_y];
+    pos_select_start = {x:mouse_x, y:mouse_y};
+    graph_svg.selectAll("rect")
+             .data([{x:pos_select_start.x,
+                      y:pos_select_start.y,
+                      width:pos_select_end.x - pos_select_start.x,
+                      height:pos_select_end.y - pos_select_start.y
+                    }])
+             .enter()
+             .append("rect")
+             .attr("x", function(d, i) { return d.x })
+             .attr("y", function(d, i) { return d.y })
+             .attr("width", function(d, i) { return d.width })
+             .attr("height", function(d, i) { return d.height })
+             .attr('stroke', 'black')
+             .style("fill", "none");
 }
 
 function dragging_select(event,d){
     var mouse = d3.pointer(event, graph_svg.node());
     var mouse_x = mouse[0];
     var mouse_y = mouse[1];
-    //d3.select(graph_svg)
+    pos_select_end = {x:mouse_x,y:mouse_y};
+    graph_svg.selectAll("rect")
+             .data([{x:pos_select_start.x,
+                      y:pos_select_start.y,
+                      width:pos_select_end.x - pos_select_start.x,
+                      height:pos_select_end.y - pos_select_start.y
+                     }])
+             .attr("x", function(d, i) { return d.x })
+             .attr("y", function(d, i) { return d.y })
+             .attr("width", function(d, i) { return d.width })
+             .attr("height", function(d, i) { return d.height })
+             .attr('stroke', 'black')
+             .style("fill", "none");
     log_print("dragging select node: x,y:" + mouse_x + " , " + mouse_y);
 }
 
@@ -324,6 +356,19 @@ function drag_select_end(event,d){
     var mouse = d3.pointer(event, graph_svg.node());
     var mouse_x = mouse[0];
     var mouse_y = mouse[1];
-    //d3.select(graph_svg)
+    pos_select_end = {x:mouse_x, y:mouse_y};
+
+    graph_svg.selectAll("rect")
+             .data([{x:pos_select_start.x,
+                      y:pos_select_start.y,
+                      width:pos_select_end.x - pos_select_start.x,
+                      height:pos_select_end.y - pos_select_start.y
+                     }])
+             .attr("x", function(d, i) { return d.x })
+             .attr("y", function(d, i) { return d.y })
+             .attr("width", function(d, i) { return d.width })
+             .attr("height", function(d, i) { return d.height })
+             .attr('stroke', 'red')
+             .style("fill", "none");
     log_print("drag select end: x,y:" + mouse_x + " , " + mouse_y);
 }
