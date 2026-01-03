@@ -101,7 +101,7 @@ function get_nodes_in_rect(graph, rect) {
            && (rect.height < 0  && (graph.nodes[i].y <= rect.y) && (graph.nodes[i].y >= rect.y + rect.height))
            || (rect.width >= 0) && (graph.nodes[i].x >= rect.x) && (graph.nodes[i].x <= rect.x + rect.width)
            && (rect.height >= 0  && (graph.nodes[i].y >= rect.y) && (graph.nodes[i].y <= rect.y + rect.height)))
-            nodes_idx.push(i);
+            nodes_idx.push(i+1);
         else
             log_print("node[" + graph.nodes[i].y + "][" + graph.nodes[i].x +"] not added");
     }
@@ -151,11 +151,20 @@ function add_node (node) {
         var mouse_y = mouse[1];
         let id = d3.select(this).node().id;
         let node = find_node( parseInt(id));
+        for (const select_node_id of selected_nodes) {
+            if (select_node_id != id) {
+                log_print("select_node_id: "+ select_node_id);
+                let select_node = find_node( select_node_id);
+                select_node.x = mouse_x + (select_node.x-node.x);
+                select_node.y = mouse_y + (select_node.y-node.y);
+                log_print("select_node_idend: "+ select_node_id);
+            }
+        }
         node.x = mouse_x;
         node.y = mouse_y;
 
         update();
-        log_print("drag node: x,y:" + mouse_x + " , " + mouse_y);
+        log_print("drag node: id: " + id + " x,y:" + mouse_x + " , " + mouse_y);
     }
 
     function dragEnd(event,d){
