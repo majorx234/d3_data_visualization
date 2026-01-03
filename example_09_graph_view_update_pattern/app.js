@@ -38,8 +38,10 @@ var graph_data  = {
 var graph_elem = {
     circles : [],
     lines : []
-}
+};
 
+var selected_nodes = [];
+var selection_mode = false;
 
 // menu click on svg to add node
 var svgMenu = [
@@ -83,6 +85,31 @@ function find_node (id) {
         if (graph_data.nodes[i].id === id)
         return graph_data.nodes[i];
     return null;
+}
+
+function get_nodes_in_rect(graph, rect) {
+    let nodes_idx = [];
+    if (graph === null) {
+        return  [];
+    }
+    for (var i = 0; i < graph.nodes.length; i++) {
+        if((rect.width < 0) && (graph.nodes[i].x < rect.x) && (graph.nodes[i].x > rect.x + rect.width)
+           && (rect.height < 0  && (graph.nodes[i].y <= rect.y) && (graph.nodes[i].y >= rect.y + rect.height))
+           || (rect.width < 0) && (graph.nodes[i].x <= rect.x) && (graph.nodes[i].x >= rect.x + rect.width)
+           && (rect.height >= 0  && (graph.nodes[i].y >= rect.y) && (graph.nodes[i].y <= rect.y + rect.height))
+           || (rect.width >= 0) && (graph.nodes[i].x >= rect.x) && (graph.nodes[i].x <= rect.x + rect.width)
+           && (rect.height < 0  && (graph.nodes[i].y <= rect.y) && (graph.nodes[i].y >= rect.y + rect.height))
+           || (rect.width >= 0) && (graph.nodes[i].x >= rect.x) && (graph.nodes[i].x <= rect.x + rect.width)
+           && (rect.height >= 0  && (graph.nodes[i].y >= rect.y) && (graph.nodes[i].y <= rect.y + rect.height)))
+            nodes_idx.push(i);
+        else
+            log_print("node[" + graph.nodes[i].y + "][" + graph.nodes[i].x +"] not added");
+    }
+    selected_nodes = nodes_idx;
+    log_print("rect slection");
+    log_print(selected_nodes);
+
+    return nodes_idx;
 }
 
 function add_node (node) {
@@ -357,13 +384,13 @@ function drag_select_end(event,d){
     var mouse_x = mouse[0];
     var mouse_y = mouse[1];
     pos_select_end = {x:mouse_x, y:mouse_y};
-
-    graph_svg.selectAll("rect")
-             .data([{x:pos_select_start.x,
+    var rect = {x:pos_select_start.x,
                       y:pos_select_start.y,
                       width:pos_select_end.x - pos_select_start.x,
                       height:pos_select_end.y - pos_select_start.y
-                     }])
+                };
+    graph_svg.selectAll("rect")
+             .data([rect])
              .attr("x", function(d, i) { return d.x })
              .attr("y", function(d, i) { return d.y })
              .attr("width", function(d, i) { return d.width })
@@ -371,4 +398,24 @@ function drag_select_end(event,d){
              .attr('stroke', 'red')
              .style("fill", "none");
     log_print("drag select end: x,y:" + mouse_x + " , " + mouse_y);
+    get_nodes_in_rect(graph_data, rect);
+
+    let cancel_action = {
+            title: 'cancel',
+            action: function (e, d) {
+                selection_mode = false;
+                selected_nodes = [];
+                log_print("cancel");
+                svgMenu = svgMenu.filter(obj => obj.title != "cancel");
+                nodeMenu = nodeMenu.filter(obj => obj.title != "cancel");
+                graph_svg.on("contextmenu", d3.contextMenu(svgMenu));
+                graph_svg.selectAll("g").on("contextmenu", d3.contextMenu(nodeMenu));
+                graph_svg.selectAll("rect").remove();
+            }
+        };
+    if(!selection_mode){
+        svgMenu.push(cancel_action);
+        nodeMenu.push(cancel_action);
+        selection_mode = true;
+    }
 }
